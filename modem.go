@@ -24,7 +24,7 @@ type SMS struct {
 	SMSSubmitMsgRef string
 }
 
-func main() {
+func check() {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", "http://192.168.0.1/goform/goform_get_cmd_process?cmd=sms_data_total&page=0&data_per_page=500&mem_store=1&tags=10&order_by=order+by+id+asc", nil)
 	req.Header.Set("Referer", "http://192.168.0.1/index.html")
