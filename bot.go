@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"strconv"
 	"time"
 )
 
-func main() {
+func start() {
 	bot, err := tgbotapi.NewBotAPI(API_KEY)
 	if err != nil {
 		log.Panic(err)
@@ -18,20 +19,24 @@ func main() {
 	updates := make(chan string)
 	go telegramSender(bot, updates)
 	go modemHandler(updates)
-	time.Sleep(100 * time.Second)
+	for {
+	}
 }
 
 // Receive the message from the channel and send it to Telegram
 func telegramSender(bot *tgbotapi.BotAPI, updates chan string) {
 	for upd := range updates {
 		msg := tgbotapi.NewMessage(ACCOUNT, upd)
-		bot.Send(msg)
+		_, err := bot.Send(msg)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
 
 // Get new modem messages and send them to channel
 func modemHandler(updates chan string) {
-	for ;; {
+	for {
 		time.Sleep(5 * time.Second)
 		updates <- "You have a new message"
 	}
@@ -49,7 +54,10 @@ func getUpdates(bot *tgbotapi.BotAPI) {
 			continue
 		}
 		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "CHAT ID: " +strconv.FormatInt(update.Message.Chat.ID, 10))
-		bot.Send(msg)
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "CHAT ID: "+strconv.FormatInt(update.Message.Chat.ID, 10))
+		_, err := bot.Send(msg)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }
