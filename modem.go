@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type SMS struct {
@@ -25,7 +26,7 @@ type SMS struct {
 	SMSSubmitMsgRef      string
 }
 
-func getMessages() {
+func getMessages() []SMS {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", "http://192.168.0.1/goform/goform_get_cmd_process?"+
 		"cmd=sms_data_total&page=0&data_per_page=500&mem_store=1&tags=10&order_by=order+by+id+asc", nil)
@@ -42,9 +43,7 @@ func getMessages() {
 		fmt.Println("Error:", err)
 	}
 
-	for _, msg := range sms {
-		fmt.Printf("ID: %s\n%s\n", msg.ID, utf8ToString(msg.Content))
-	}
+	return sms
 }
 
 func utf8ToString(str string) string {
@@ -76,5 +75,19 @@ func deleteMessage(id string) {
 		fmt.Println(err)
 	} else {
 		defer resp.Body.Close()
+	}
+}
+
+// Get new modem messages and send them to channel
+func modemHandler(updates chan string) {
+	for {
+		msgs := getMessages()
+		if len(msgs) != 0 {
+			for _, msg := range msgs {
+				updates <- "[" + msg.Number + "]" + "\n\n" + utf8ToString(msg.Content)
+				deleteMessage(msg.ID)
+			}
+		}
+		time.Sleep(5 * time.Second)
 	}
 }
