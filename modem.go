@@ -12,18 +12,18 @@ import (
 )
 
 type SMS struct {
-	ID                   string      `json:"id"`
-	Number               string      `json:"number"`
-	Content              string      `json:"content"`
-	Tag                  string      `json:"tag"`
-	Date                 string      `json:"date"`
-	DraftGroupID         json.Number `json:"draft_group_id,omitempty"`
-	ReceivedAllConcatSMS json.Number `json:"received_all_concat_sms,omitempty"`
-	ConcatSMSTotal       json.Number `json:"concat_sms_total"`
-	ConcatSMSReceived    json.Number `json:"concat_sms_received"`
-	SMSClass             json.Number `json:"sms_class"`
-	SMSMem               string      `json:"sms_mem"`
-	SMSSubmitMsgRef      string      `json:"sms_submit_msg_ref,omitempty"`
+	ID                   string `json:"id"`
+	Number               string `json:"number"`
+	Content              string `json:"content"`
+	Tag                  string `json:"tag"`
+	Date                 string `json:"date"`
+	DraftGroupID         string `json:"draft_group_id,omitempty"`
+	ReceivedAllConcatSMS string `json:"received_all_concat_sms,omitempty"`
+	ConcatSMSTotal       string `json:"concat_sms_total"`
+	ConcatSMSReceived    string `json:"concat_sms_received"`
+	SMSClass             string `json:"sms_class"`
+	SMSMem               string `json:"sms_mem"`
+	SMSSubmitMsgRef      string `json:"sms_submit_msg_ref,omitempty"`
 }
 
 func getMessages() []SMS {
