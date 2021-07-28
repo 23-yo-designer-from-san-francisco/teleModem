@@ -15,6 +15,5 @@ func main() {
 	go telegramSender(bot, updates)
 	updates <- "***Up and running***"
 	go modemHandler(updates)
-	for {
-	}
+	select {}
 }
