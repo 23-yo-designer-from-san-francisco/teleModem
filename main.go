@@ -13,6 +13,7 @@ func main() {
 	bot.Debug = false
 	updates := make(chan string)
 	go telegramSender(bot, updates)
+	updates <- "***Up and running***"
 	go modemHandler(updates)
 	for {
 	}

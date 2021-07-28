@@ -12,18 +12,18 @@ import (
 )
 
 type SMS struct {
-	ID                   string
-	Number               string
-	Content              string
-	Tag                  string
-	Date                 string
-	DraftGroupID         string
-	ReceivedAllConcatSMS string
-	ConcatSMSTotal       string
-	ConcatSMSReceived    string
-	SMSClass             string
-	SMSMem               string
-	SMSSubmitMsgRef      string
+	ID                   string      `json:"id"`
+	Number               string      `json:"number"`
+	Content              string      `json:"content"`
+	Tag                  string      `json:"tag"`
+	Date                 string      `json:"date"`
+	DraftGroupID         json.Number `json:"draft_group_id,omitempty"`
+	ReceivedAllConcatSMS json.Number `json:"received_all_concat_sms,omitempty"`
+	ConcatSMSTotal       json.Number `json:"concat_sms_total"`
+	ConcatSMSReceived    json.Number `json:"concat_sms_received"`
+	SMSClass             json.Number `json:"sms_class"`
+	SMSMem               string      `json:"sms_mem"`
+	SMSSubmitMsgRef      string      `json:"sms_submit_msg_ref,omitempty"`
 }
 
 func getMessages() []SMS {
@@ -38,9 +38,10 @@ func getMessages() []SMS {
 
 	var sms []SMS
 
-	err := json.Unmarshal(body, &sms)
-	if err != nil {
-		fmt.Println("Error:", err)
+	if len(body) > 2 {
+		if err := json.Unmarshal(body, &sms); err != nil {
+			fmt.Println("Error:", err)
+		}
 	}
 
 	return sms
@@ -84,8 +85,10 @@ func modemHandler(updates chan string) {
 		msgs := getMessages()
 		if len(msgs) != 0 {
 			for _, msg := range msgs {
-				updates <- "[" + msg.Number + "]" + "\n\n" + utf8ToString(msg.Content)
-				deleteMessage(msg.ID)
+				if msg.ReceivedAllConcatSMS == "1" {
+					updates <- "[" + msg.Number + "]" + "\n\n" + utf8ToString(msg.Content)
+					deleteMessage(msg.ID)
+				}
 			}
 		}
 		time.Sleep(5 * time.Second)
